@@ -14,5 +14,5 @@
 
 |  | Date Finished | Link |
 | ---- | ---- | ---- |
-| 2.1 | 2023.09.10 | [Notebook](./week2/1.ipynb) |
-| 2.2 | 2023.09.10 | [Notebook](./week2/2.ipynb) |
+| 2.1 | 2023.09.10 | [Notebook](./week1/3.ipynb) |
+| 2.2 | 2023.09.10 | [Notebook](./week1/4.ipynb) |
