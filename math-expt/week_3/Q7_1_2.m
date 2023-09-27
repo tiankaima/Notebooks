@@ -5,11 +5,12 @@ filenames = [
   "math-expt/week_3/imgs/Q7_1_6.gif"
 ];
 
-for t = 0:0.02:4
+for t = 0:0.2:100
+    theta0 = 2*atan(0.1);
     a = calculate(t);
-    b = calculate(t-1)+[1 0];
-    c = calculate(t+2)-[2 0];
-    d = calculate(t+1)-[1 0];
+    b = calculate(t+1)* [cos(theta0), -sin(theta0); sin(theta0), cos(theta0)];
+    c = calculate(t+2)* [cos(2*theta0), -sin(2*theta0); sin(2*theta0), cos(2*theta0)];
+    d = calculate(t+3)* [cos(3*theta0), -sin(3*theta0); sin(3*theta0), cos(3*theta0)];
 
     p = (2*a + b)/3;
     q = (a + 2*b + 3*c + 4*d)/10;
@@ -26,12 +27,17 @@ for t = 0:0.02:4
 
       x = reshape(histories(i,1,:), 1, []);
       y = reshape(histories(i,2,:), 1, []);
-      plot(x,y,'r.');
+      plot(x,y,'r-');
+
+      l=0:0.02:2*pi;
+      x = 5*cos(l);
+      y = 5*sin(l);
+      plot(x,y,'k-');
       hold off
 
       grid on;
       daspect([1 1 1])
-      axis([-0.5 5.5 -0.5 2.5])
+      axis([-5 5 -5 5])
       drawnow;
       frame = getframe(1);
       im = frame2im(frame);
@@ -44,43 +50,28 @@ for t = 0:0.02:4
     end
 end
 
-
-
-
 % p = p(t)
 function p = calculate(t)
-    % return (x(t),y(t))
-    p = [calculate_x(t), calculate_y(t)];
-end
-
-% x = x(t)
-function x = calculate_x(t)
-  speed = pi/2;
+  r = 5;
+  theta0 = 2*atan(0.1);
   base = (t - mod(t,4));
   t = mod(t, 4);
-  if t<1
-    x = 1 - cos(speed*t);
+  if t < 1
+    p = r*[cos(theta0), sin(theta0)];
+    k = - (0.5*pi - 0.5*theta0) - t * (0.5*pi - theta0);
+    p = p + [cos(k), sin(k)];
   elseif t<2
-    x = 2 - sqrt(2) * cos(speed*(t-1) + pi/4);
-  elseif t<3
-    x = 3 + sin(speed*(t-2));
+    p = [r*cos(2*theta0), r*sin(2*theta0)];
+    k = - (0.75*pi - 1.5*theta0) - (t-1) * (0.5*pi - theta0);
+    p = p + sqrt(2)*[cos(k), sin(k)];
+  elseif t<=3
+    p = [r*cos(3*theta0), r*sin(3*theta0)];
+    k = - (pi - 2.5*theta0) - (t-2) * (0.5*pi - theta0);
+    p = p + [cos(k), sin(k)];
   else
-    x = 4;
+    p = calculate(3);
   end
-  x = x + base;
-end
 
-% y = y(t)
-function y = calculate_y(t)
-  speed = pi/2;
-  t = mod(t, 4);
-  if t<1
-    y = sin(speed*t);
-  elseif t<2
-    y = sqrt(2) * sin(speed*(t-1) + pi/4);
-  elseif t<3
-    y = cos(speed*(t-2));
-  else
-    y = 0;
-  end
+  % rotate the point around origin point by base * theta_0
+  p = p * [cos(base*theta0), sin(base*theta0); -sin(base*theta0), cos(base*theta0)];
 end
