@@ -33,7 +33,7 @@ jobs:
           wget https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download/v2.4.1/Eisvogel-2.4.1.zip -O /tmp/Eisvogel.zip
           unzip /tmp/Eisvogel.zip -d /tmp/Eisvogel
           mkdir -p /usr/share/pandoc/data/templates/
-          cp /tmp/Eisvogel/*.latex /usr/share/pandoc/data/templates/
+          sudo cp /tmp/Eisvogel/*.latex /usr/share/pandoc/data/templates/
 
       - name: Run build.sh
         run: ./build.sh
