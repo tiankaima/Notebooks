@@ -20,7 +20,7 @@ jobs:
           pip install notebook
           sudo apt-get update
           sudo apt-get install -y pandoc texlive-latex-recommended texlive-xetex texlive-luatex pandoc-citeproc \
-            texlive-latex-extra context wkhtmltopdf librsvg2-bin groff ghc nodejs python \
+            texlive-latex-extra context wkhtmltopdf librsvg2-bin groff ghc nodejs \
             libjs-mathjax libjs-katex citation-style-language-styles \
 
       - name: Install Source Han Serif CN & Eisvogel
