@@ -1,0 +1,39 @@
+name: Build and Release Workflow
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11  # Choose the appropriate Python version if needed
+
+      - name: Install Jupyter Notebook and Pandoc
+        run: |
+          pip install notebook
+          apt-get update
+          apt-get install -y pandoc
+
+      - name: Install "Source Han Serif CN" font
+        run: |
+          mkdir -p /tmp/SourceHanSerifCN
+          wget https://mirrors.tuna.tsinghua.edu.cn/adobe-fonts/source-han-serif/SubsetOTF/SourceHanSerifCN.zip -O /tmp/SourceHanSerifCN.zip
+          unzip /tmp/SourceHanSerifCN.zip -d /tmp/SourceHanSerifCN
+          mkdir -p /usr/share/fonts/SourceHanSerifCN
+          cp /tmp/SourceHanSerifCN/*.otf /usr/share/fonts/SourceHanSerifCN
+
+      - name: Run build.sh
+        run: ./build.sh
+
+      - name: Upload Build Folder to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: PDF & Markdown
+          path: ./build
