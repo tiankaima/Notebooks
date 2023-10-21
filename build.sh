@@ -23,7 +23,9 @@ for file in $(git ls-files | grep .ipynb); do
     # use pandoc to convert markdown to pdf, store in `build/pdf/${file%.ipynb}.pdf`
     pandoc build/markdown/$filename.md \
         -o build/pdf/$filename.pdf \
+        --pdf-engine=xelatex \
         --resource-path build/markdown \
         --template eisvogel \
+        -V mainfont="Source Han Serif CN" \
         # --listings
 done
