@@ -1,4 +1,4 @@
-name: Build and Release Workflow
+name: Build PDF
 
 on: [push]
 
@@ -13,13 +13,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.11  # Choose the appropriate Python version if needed
+          python-version: 3.11
 
       - name: Install Jupyter Notebook and Pandoc
         run: |
           pip install notebook
-          apt-get update
-          apt-get install -y pandoc
+          sudo apt-get update
+          sudo apt-get install -y pandoc
 
       - name: Install "Source Han Serif CN" font
         run: |
