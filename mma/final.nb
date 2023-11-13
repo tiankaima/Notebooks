@@ -1,0 +1,524 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     22229,        516]
+NotebookOptionsPosition[     21441,        493]
+NotebookOutlinePosition[     22047,        514]
+CellTagsIndexPosition[     22004,        511]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\"\<Global`\>\"", "]"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Load", " ", "Image"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"img", "=", 
+   RowBox[{
+   "Import", "[", "\"\<~/Source/tiankaima/Notebooks/mma/cropped_img.jpg\>\"", 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"imageWidth", "=", 
+   RowBox[{
+    RowBox[{"ImageDimensions", "[", "img", "]"}], "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{
+  3.9088028834139557`*^9, {3.908802993368335*^9, 3.9088029982061787`*^9}},
+ Background->RGBColor[0.9, 1, 1],
+ CellLabel->"In[1]:=",ExpressionUUID->"aa492140-c981-41d7-8e98-46d7a99771f2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"radius", "=", "selectedRadius"}], ",", "\[IndentingNewLine]", 
+       
+       RowBox[{"width", "=", "1.0"}], ",", 
+       RowBox[{"height", "=", "1.0"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"k", "=", "30"}], ",", "\[IndentingNewLine]", "gridSize", ",", 
+       "grid", ",", "activeList", ",", "samplePoints", ",", "initialPoint", 
+       ",", "point", ",", "found", ",", "newPoint", ",", "idxIdx", ",", "idx",
+        ",", "gi", ",", "gj", ",", "triangles", ",", "scaledPoints", ",", 
+       "coloredTriangles"}], "}"}], ",", "\[IndentingNewLine]", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"gridSize", "=", 
+       RowBox[{"radius", "/", 
+        RowBox[{"Sqrt", "[", "2", "]"}]}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"grid", "=", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"-", "1"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", 
+           RowBox[{"Ceiling", "[", 
+            RowBox[{"height", "/", "gridSize"}], "]"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"j", ",", 
+           RowBox[{"Ceiling", "[", 
+            RowBox[{"width", "/", "gridSize"}], "]"}]}], "}"}]}], "]"}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"activeList", "=", 
+       RowBox[{"{", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"samplePoints", "=", 
+       RowBox[{"{", "}"}]}], ";", "\n", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"distance", "[", 
+        RowBox[{"a_", ",", "b_"}], "]"}], ":=", 
+       RowBox[{"Norm", "[", 
+        RowBox[{"a", "-", "b"}], "]"}]}], ";", 
+      RowBox[{
+       RowBox[{"gridPos", "[", "p_", "]"}], ":=", 
+       RowBox[{
+        RowBox[{"Floor", "[", 
+         RowBox[{"p", "/", "gridSize"}], "]"}], "+", "1"}]}], ";", "\n", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"randomPointAround", "[", 
+        RowBox[{"{", 
+         RowBox[{"x_", ",", "y_"}], "}"}], "]"}], ":=", 
+       RowBox[{"With", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"r", "=", 
+            RowBox[{"RandomReal", "[", 
+             RowBox[{"{", 
+              RowBox[{"radius", ",", 
+               RowBox[{"2", " ", "radius"}]}], "}"}], "]"}]}], ",", 
+           RowBox[{"theta", "=", 
+            RowBox[{"RandomReal", "[", 
+             RowBox[{"{", 
+              RowBox[{"0", ",", 
+               RowBox[{"2", " ", "Pi"}]}], "}"}], "]"}]}]}], "}"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"x", "+", 
+            RowBox[{"r", " ", 
+             RowBox[{"Cos", "[", "theta", "]"}]}]}], ",", 
+           RowBox[{"y", "+", 
+            RowBox[{"r", " ", 
+             RowBox[{"Sin", "[", "theta", "]"}]}]}]}], "}"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\n", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"isValidPoint", "[", 
+        RowBox[{"p", ":", 
+         RowBox[{"{", 
+          RowBox[{"x_", ",", "y_"}], "}"}]}], "]"}], ":=", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"0", "<=", "x", "<=", "width"}], "&&", "\[IndentingNewLine]", 
+        
+        RowBox[{"0", "<=", "y", "<=", "height"}], "&&", "\[IndentingNewLine]", 
+        RowBox[{"AllTrue", "[", 
+         RowBox[{
+          RowBox[{"Flatten", "[", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Table", "[", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"grid", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"i", ",", "j"}], "]"}], "]"}], "!=", 
+                 RowBox[{"-", "1"}]}], ",", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"distance", "[", 
+                  RowBox[{
+                   RowBox[{"samplePoints", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"grid", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"i", ",", "j"}], "]"}], "]"}], "]"}], "]"}], ",", 
+                   "p"}], "]"}], ">=", "radius"}], ",", "\[IndentingNewLine]",
+                 "True"}], "\[IndentingNewLine]", "]"}], ",", 
+              "\[IndentingNewLine]", 
+              RowBox[{"{", 
+               RowBox[{"i", ",", 
+                RowBox[{"Max", "[", 
+                 RowBox[{"1", ",", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"gridPos", "[", "p", "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "-", "2"}]}], "]"}], ",", 
+                
+                RowBox[{"Min", "[", 
+                 RowBox[{
+                  RowBox[{"Length", "[", "grid", "]"}], ",", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"gridPos", "[", "p", "]"}], "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "+", "2"}]}], "]"}]}], 
+               "}"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"j", ",", 
+                RowBox[{"Max", "[", 
+                 RowBox[{"1", ",", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"gridPos", "[", "p", "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "-", "2"}]}], "]"}], ",", 
+                
+                RowBox[{"Min", "[", 
+                 RowBox[{
+                  RowBox[{"Length", "[", 
+                   RowBox[{"grid", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "]"}], ",", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"gridPos", "[", "p", "]"}], "[", 
+                    RowBox[{"[", "2", "]"}], "]"}], "+", "2"}]}], "]"}]}], 
+               "}"}]}], "]"}], ",", "\[IndentingNewLine]", "2"}], "]"}], ",", 
+          "\[IndentingNewLine]", "Identity"}], "\[IndentingNewLine]", 
+         "]"}]}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"initialPoint", "=", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"RandomReal", "[", "width", "]"}], ",", 
+         RowBox[{"RandomReal", "[", "height", "]"}]}], "}"}]}], ";", 
+      RowBox[{"AppendTo", "[", 
+       RowBox[{"samplePoints", ",", "initialPoint"}], "]"}], ";", 
+      RowBox[{"AppendTo", "[", 
+       RowBox[{"activeList", ",", "initialPoint"}], "]"}], ";", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"gi", ",", "gj"}], "}"}], "=", 
+       RowBox[{"gridPos", "[", "initialPoint", "]"}]}], ";", 
+      RowBox[{
+       RowBox[{"grid", "[", 
+        RowBox[{"[", 
+         RowBox[{"gi", ",", "gj"}], "]"}], "]"}], "=", "1"}], ";", "\n", 
+      "\[IndentingNewLine]", 
+      RowBox[{"While", "[", 
+       RowBox[{
+        RowBox[{"activeList", "!=", 
+         RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"idx", "=", 
+          RowBox[{"RandomInteger", "[", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", 
+             RowBox[{"Length", "[", "activeList", "]"}]}], "}"}], "]"}]}], 
+         ";", "\[IndentingNewLine]", 
+         RowBox[{"point", "=", 
+          RowBox[{"activeList", "[", 
+           RowBox[{"[", "idx", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"found", "=", "False"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"Do", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"newPoint", "=", 
+             RowBox[{"randomPointAround", "[", "point", "]"}]}], ";", 
+            "\[IndentingNewLine]", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{"isValidPoint", "[", "newPoint", "]"}], ",", 
+              "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"AppendTo", "[", 
+                RowBox[{"samplePoints", ",", "newPoint"}], "]"}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"AppendTo", "[", 
+                RowBox[{"activeList", ",", "newPoint"}], "]"}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"{", 
+                 RowBox[{"gi", ",", "gj"}], "}"}], "=", 
+                RowBox[{"gridPos", "[", "newPoint", "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"grid", "[", 
+                 RowBox[{"[", 
+                  RowBox[{"gi", ",", "gj"}], "]"}], "]"}], "=", 
+                RowBox[{"Length", "[", "samplePoints", "]"}]}], ";", 
+               "\[IndentingNewLine]", 
+               RowBox[{"found", "=", "True"}], ";", "\[IndentingNewLine]", 
+               RowBox[{"Break", "[", "]"}], ";"}]}], "\[IndentingNewLine]", 
+             "]"}]}], ",", 
+           RowBox[{"{", "k", "}"}]}], "]"}], ";", "\[IndentingNewLine]", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"!", "found"}], ",", "\[IndentingNewLine]", 
+           RowBox[{"activeList", "=", 
+            RowBox[{"Delete", "[", 
+             RowBox[{"activeList", ",", "idx"}], "]"}]}]}], 
+          "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", "]"}],
+       ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"scaledPoints", "=", 
+       RowBox[{"samplePoints", "*", "imageWidth"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"triangles", "=", 
+       RowBox[{"DelaunayMesh", "[", "scaledPoints", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"triangleCentroid", "[", "pts_", "]"}], ":=", 
+       RowBox[{"Mean", "[", "pts", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"sampleColor", "[", "pt_", "]"}], ":=", 
+       RowBox[{"PixelValue", "[", 
+        RowBox[{"img", ",", "pt"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"coloredTriangles", "=", 
+       RowBox[{"Graphics", "[", 
+        RowBox[{
+         RowBox[{"{", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"EdgeForm", "[", "]"}], ",", "\[IndentingNewLine]", 
+           RowBox[{"Table", "[", 
+            RowBox[{
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"RGBColor", "[", "\[IndentingNewLine]", 
+                RowBox[{"sampleColor", "[", 
+                 RowBox[{"triangleCentroid", "[", 
+                  RowBox[{
+                   RowBox[{"MeshCoordinates", "[", "triangles", "]"}], "[", 
+                   RowBox[{"[", "triangle", "]"}], "]"}], "]"}], "]"}], "]"}],
+                ",", 
+               RowBox[{"Triangle", "[", 
+                RowBox[{
+                 RowBox[{"MeshCoordinates", "[", "triangles", "]"}], "[", 
+                 RowBox[{"[", "triangle", "]"}], "]"}], "]"}]}], 
+              "\[IndentingNewLine]", "}"}], ",", 
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{"triangle", ",", 
+               RowBox[{"First", "/@", 
+                RowBox[{"MeshCells", "[", 
+                 RowBox[{"triangles", ",", "2"}], "]"}]}]}], "}"}]}], "]"}]}],
+           "\[IndentingNewLine]", "}"}], ",", 
+         RowBox[{"Frame", "->", "False"}]}], "\[IndentingNewLine]", "]"}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"Show", "[", 
+       RowBox[{"coloredTriangles", ",", 
+        RowBox[{"Frame", "->", "False"}]}], "]"}]}]}], "\[IndentingNewLine]", 
+    "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"selectedRadius", ",", "0.02", ",", "\"\<Radius\>\""}], "}"}], 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{
+      "0.01", ",", "0.02", ",", "0.04", ",", "0.08", ",", "0.16", ",", 
+       "0.32"}], "}"}]}], "}"}]}], "\n", "]"}]], "Input",
+ CellChangeTimes->{{3.908801875361149*^9, 3.9088020474587173`*^9}, {
+   3.908802082813905*^9, 3.908802138014889*^9}, {3.908802172020399*^9, 
+   3.908802211680047*^9}, {3.908802450508891*^9, 3.908802517780888*^9}, 
+   3.9088025480293913`*^9, {3.908802597837566*^9, 3.908802689988226*^9}, {
+   3.90880274253286*^9, 3.908802863096911*^9}, {3.9088031139620533`*^9, 
+   3.908803192899732*^9}, {3.9088032465902023`*^9, 3.908803431352034*^9}, {
+   3.908803519418898*^9, 3.908803519700774*^9}, {3.908803568894066*^9, 
+   3.9088035851752577`*^9}, {3.908803618084392*^9, 3.908803656780229*^9}, {
+   3.90880375007126*^9, 3.9088038122137213`*^9}},
+ Background->RGBColor[0.87, 0.94, 1],
+ CellLabel->"In[4]:=",ExpressionUUID->"0433eec4-6c2f-4881-bd80-760dcef0e1c6"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`selectedRadius$$ = 0.01, Typeset`show$$ = 
+    True, Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`selectedRadius$$], 0.02, "Radius"}, {0.01, 0.02, 
+      0.04, 0.08, 0.16, 0.32}}}, Typeset`size$$ = {
+    360., {177., 182.39793921345148`}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = True}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, "Variables" :> {$CellContext`selectedRadius$$ = 0.02}, 
+      "ControllerVariables" :> {}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`radius = $CellContext`selectedRadius$$, \
+$CellContext`width = 1., $CellContext`height = 1., $CellContext`k = 
+         30, $CellContext`gridSize, $CellContext`grid, \
+$CellContext`activeList, $CellContext`samplePoints, \
+$CellContext`initialPoint, $CellContext`point, $CellContext`found, \
+$CellContext`newPoint, $CellContext`idxIdx, $CellContext`idx, \
+$CellContext`gi, $CellContext`gj, $CellContext`triangles, \
+$CellContext`scaledPoints, $CellContext`coloredTriangles}, \
+$CellContext`gridSize = $CellContext`radius/Sqrt[2]; $CellContext`grid = 
+         Table[-1, {$CellContext`i, 
+            
+            Ceiling[$CellContext`height/$CellContext`gridSize]}, \
+{$CellContext`j, 
+            
+            Ceiling[$CellContext`width/$CellContext`gridSize]}]; \
+$CellContext`activeList = {}; $CellContext`samplePoints = {}; \
+$CellContext`distance[
+           Pattern[$CellContext`a, 
+            Blank[]], 
+           Pattern[$CellContext`b, 
+            Blank[]]] := 
+         Norm[$CellContext`a - $CellContext`b]; $CellContext`gridPos[
+           Pattern[$CellContext`p, 
+            Blank[]]] := 
+         Floor[$CellContext`p/$CellContext`gridSize] + 
+          1; $CellContext`randomPointAround[{
+            Pattern[$CellContext`x, 
+             Blank[]], 
+            Pattern[$CellContext`y, 
+             Blank[]]}] := 
+         With[{$CellContext`r = 
+            RandomReal[{$CellContext`radius, 
+               2 $CellContext`radius}], $CellContext`theta = 
+            RandomReal[{0, 2 Pi}]}, {$CellContext`x + $CellContext`r 
+             Cos[$CellContext`theta], $CellContext`y + $CellContext`r 
+             Sin[$CellContext`theta]}]; $CellContext`isValidPoint[
+           Pattern[$CellContext`p, {
+             Pattern[$CellContext`x, 
+              Blank[]], 
+             Pattern[$CellContext`y, 
+              Blank[]]}]] := 
+         And[0 <= $CellContext`x <= $CellContext`width, 
+           0 <= $CellContext`y <= $CellContext`height, 
+           AllTrue[
+            Flatten[
+             Table[
+              If[
+              Part[$CellContext`grid, $CellContext`i, $CellContext`j] != -1, \
+$CellContext`distance[
+                 Part[$CellContext`samplePoints, 
+                  
+                  Part[$CellContext`grid, $CellContext`i, $CellContext`j]], \
+$CellContext`p] >= $CellContext`radius, True], {$CellContext`i, 
+               Max[1, Part[
+                  $CellContext`gridPos[$CellContext`p], 1] - 2], 
+               Min[
+                Length[$CellContext`grid], Part[
+                  $CellContext`gridPos[$CellContext`p], 1] + 
+                2]}, {$CellContext`j, 
+               Max[1, Part[
+                  $CellContext`gridPos[$CellContext`p], 2] - 2], 
+               Min[
+                Length[
+                 Part[$CellContext`grid, 1]], Part[
+                  $CellContext`gridPos[$CellContext`p], 2] + 2]}], 2], 
+            Identity]]; $CellContext`initialPoint = {
+           RandomReal[$CellContext`width], 
+           RandomReal[$CellContext`height]}; 
+        AppendTo[$CellContext`samplePoints, $CellContext`initialPoint]; 
+        AppendTo[$CellContext`activeList, $CellContext`initialPoint]; \
+{$CellContext`gi, $CellContext`gj} = \
+$CellContext`gridPos[$CellContext`initialPoint]; 
+        Part[$CellContext`grid, $CellContext`gi, $CellContext`gj] = 1; 
+        While[$CellContext`activeList != {}, $CellContext`idx = 
+           RandomInteger[{1, 
+              Length[$CellContext`activeList]}]; $CellContext`point = 
+           Part[$CellContext`activeList, $CellContext`idx]; \
+$CellContext`found = False; 
+          Do[$CellContext`newPoint = \
+$CellContext`randomPointAround[$CellContext`point]; If[
+              $CellContext`isValidPoint[$CellContext`newPoint], 
+              AppendTo[$CellContext`samplePoints, $CellContext`newPoint]; 
+              AppendTo[$CellContext`activeList, $CellContext`newPoint]; \
+{$CellContext`gi, $CellContext`gj} = \
+$CellContext`gridPos[$CellContext`newPoint]; 
+              Part[$CellContext`grid, $CellContext`gi, $CellContext`gj] = 
+               Length[$CellContext`samplePoints]; $CellContext`found = True; 
+              Break[]; Null], {$CellContext`k}]; If[
+            Not[$CellContext`found], $CellContext`activeList = 
+            Delete[$CellContext`activeList, $CellContext`idx]]; 
+          Null]; $CellContext`scaledPoints = $CellContext`samplePoints \
+$CellContext`imageWidth; $CellContext`triangles = 
+         DelaunayMesh[$CellContext`scaledPoints]; \
+$CellContext`triangleCentroid[
+           Pattern[$CellContext`pts, 
+            Blank[]]] := Mean[$CellContext`pts]; $CellContext`sampleColor[
+           Pattern[$CellContext`pt, 
+            Blank[]]] := 
+         PixelValue[$CellContext`img, $CellContext`pt]; \
+$CellContext`coloredTriangles = Graphics[{
+            EdgeForm[], 
+            Table[{
+              RGBColor[
+               $CellContext`sampleColor[
+                $CellContext`triangleCentroid[
+                 Part[
+                  
+                  MeshCoordinates[$CellContext`triangles], \
+$CellContext`triangle]]]], 
+              Triangle[
+               Part[
+                
+                MeshCoordinates[$CellContext`triangles], \
+$CellContext`triangle]]}, {$CellContext`triangle, 
+              Map[First, 
+               MeshCells[$CellContext`triangles, 2]]}]}, Frame -> False]; 
+        Show[$CellContext`coloredTriangles, Frame -> False]], 
+      "Specifications" :> {{{$CellContext`selectedRadius$$, 0.02, "Radius"}, {
+         0.01, 0.02, 0.04, 0.08, 0.16, 0.32}}}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
+     ImageSizeCache->{406., {224.1875, 229.8125}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{{3.908802681289723*^9, 3.9088026913220043`*^9}, {
+   3.908802754093644*^9, 3.908802762528792*^9}, {3.908802799369491*^9, 
+   3.908802885861945*^9}, 3.90880300607937*^9, 3.90880317030862*^9, 
+   3.908803231484124*^9, {3.908803431906636*^9, 3.908803467640333*^9}, {
+   3.908803520232349*^9, 3.908803538381401*^9}, {3.9088035730042048`*^9, 
+   3.908803590930504*^9}, {3.908803635203226*^9, 3.908803663149534*^9}, 
+   3.908803766000285*^9, 3.908803813958392*^9, 3.90880453311605*^9},
+ CellLabel->"Out[4]=",ExpressionUUID->"2b5f46f4-1f90-449b-8346-e669a53d7975"]
+}, Open  ]]
+},
+WindowSize->{1440, 763.5},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperOrientation"->"Portrait",
+"PaperSize"->{Automatic, Automatic},
+"PostScriptOutputFile"->"/home/tiankaima/Downloads/print23.pdf"},
+FrontEndVersion->"13.3 for Linux x86 (64-bit) (July 24, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"23d85dc5-e5ca-4d5a-8226-2f08780d25dc"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 726, 18, 106, "Input",ExpressionUUID->"aa492140-c981-41d7-8e98-46d7a99771f2"],
+Cell[CellGroupData[{
+Cell[1309, 42, 12487, 289, 1546, "Input",ExpressionUUID->"0433eec4-6c2f-4881-bd80-760dcef0e1c6"],
+Cell[13799, 333, 7626, 157, 473, "Output",ExpressionUUID->"2b5f46f4-1f90-449b-8346-e669a53d7975"]
+}, Open  ]]
+}
+]
+*)
+
