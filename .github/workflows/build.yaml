@@ -17,23 +17,7 @@ jobs:
 
       - name: Install Jupyter Notebook and Pandoc
         run: |
-          pip install notebook
-          sudo apt-get update
-          sudo apt-get install -y pandoc texlive-latex-recommended texlive-xetex texlive-luatex pandoc-citeproc \
-            texlive-latex-extra context wkhtmltopdf librsvg2-bin groff ghc nodejs \
-            libjs-mathjax libjs-katex citation-style-language-styles \
-
-      - name: Install Source Han Serif CN & Eisvogel
-        run: |
-          mkdir -p /tmp/SourceHanSerifCN
-          wget https://mirrors.tuna.tsinghua.edu.cn/adobe-fonts/source-han-serif/SubsetOTF/SourceHanSerifCN.zip -O /tmp/SourceHanSerifCN.zip
-          unzip /tmp/SourceHanSerifCN.zip -d /tmp/SourceHanSerifCN
-          mkdir -p /usr/share/fonts/SourceHanSerifCN
-          cp /tmp/SourceHanSerifCN/*.otf /usr/share/fonts/SourceHanSerifCN
-          wget https://github.com/Wandmalfarbe/pandoc-latex-template/releases/download/v2.4.1/Eisvogel-2.4.1.zip -O /tmp/Eisvogel.zip
-          unzip /tmp/Eisvogel.zip -d /tmp/Eisvogel
-          mkdir -p /usr/share/pandoc/data/templates/
-          sudo cp /tmp/Eisvogel/*.latex /usr/share/pandoc/data/templates/
+          pip install notebook 'nbconvert[webpdf]'
 
       - name: Run build.sh
         run: ./build.sh
