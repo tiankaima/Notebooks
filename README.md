@@ -7,12 +7,12 @@
 
 ## Index
 
-| 说明 | 目录 |
-| --- | --- |
-| 数学实验 (2023Fall.001108.01) | [Link](./2023Fall.001108.01/README.md) |
-| 符号计算软件 (2023Fall.001361.01) | [Link](./2023Fall.001361.01/README.md) |
-| 微分几何 (2023Fall.Math3009.01) | [Link](./2023Fall.Math3009.01/README.md) |
-| 微分方程引论 (2023Fall.Math3012.01) | [Link](./2023Fall.Math3012.01/README.md) |
+| 说明 | 课程号 | 目录 |
+| --- | --- | --- |
+| 数学实验 | 2023Fall.001108.01 | [Link](./2023Fall.001108.01/README.md) |
+| 符号计算软件 | 2023Fall.001361.01 | [Link](./2023Fall.001361.01/README.md) |
+| 微分几何 | 2023Fall.Math3009.01 | [Link](./2023Fall.Math3009.01/README.md) |
+| 微分方程引论 | 2023Fall.Math3012.01 | [Link](./2023Fall.Math3012.01/README.md) |
 
 ## License
 
